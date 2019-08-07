@@ -18,12 +18,17 @@ async def on_message(message):
 
     if message.content.startswith('$gbf'):
         startTime = time.time()
-        s = requests.Session()
+        session = requests.Session()
         api = "https://gbf.wiki/api.php"
         request = "Medusa"                    # Change this to be arg {whatever} later
 
-        # Have a function here that makes changes to the title
-        # For now, we'll make it such that it only accepts (basic) characters
+        """
+        Have a function here that makes changes to the title to 
+        something readable for the API
+        
+        For now, we'll make it such that it only accepts basic characters
+        that don't require any modifications to the request name 
+        """
 
         parameters = {
             'action': "parse",
@@ -31,11 +36,11 @@ async def on_message(message):
             'format': "json"
         }
 
-        result = s.get(url=api, params=parameters)
+        result = session.get(url=api, params=parameters)
         data = result.json()
-        embed = discord.Embed(title="Katalina (Grand)",
+        embed = discord.Embed(title=request,
                               colour=discord.Colour(0xFFFFFF),
-                              url="https://gbf.wiki/Katalina_(Grand)")
+                              url="https://gbf.wiki/" + "Medusa")
         await message.channel.send(embed=embed)
 
         # Calculate the duration of the request
@@ -44,4 +49,4 @@ async def on_message(message):
 
 
 # Change ...
-client.run('NDg0OTU3ODcwNDc1OTY4NTE5.XN7fKw.4dqhQaQti3CzLL9UAFfS_eZkpRU')
+client.run('-')
