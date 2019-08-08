@@ -1,4 +1,5 @@
 import requests
+import re
 from bs4 import BeautifulSoup
 
 session = requests.Session()
@@ -13,10 +14,14 @@ parameters = {
 
 result = session.get(url=api, params=parameters)
 soup = BeautifulSoup(result.content, 'lxml')
-links = soup.find_all('a')
-links2 = soup.find_all('a')
-print(links2)
-for link in links:
-	if "Medusa" in link.text:
-		print(link)
-		print(link.attrs['title'])
+
+image = soup.find_all(attrs={'srcset':True})
+regex = re.compile(r".png'")
+linkToImage = ""
+for i in image:
+	if bool(re.search('01\.png', i['srcset'])):
+		linkToImage = i['srcset']
+		linkToImage = linkToImage[2:]
+		linkToImage = "gbf.wiki" + linkToImage
+		print(linkToImage)
+		break

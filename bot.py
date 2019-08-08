@@ -1,52 +1,116 @@
 import discord
 import requests
-import time
+import re
+from discord.ext import commands
 from bs4 import BeautifulSoup
 
-client = discord.Client()
+description = "A GBF Wiki web-scraping tool"
+bot = commands.Bot(command_prefix='$', description=description)
 
 
-@client.event
+@bot.event
 async def on_ready():
-    print('Logged on as {0.user}!'.format(client))
+    print('Logged in as ' + bot.user.name)
 
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+@bot.command()
+async def art(ctx, *, char: str):
+    session = requests.Session()
+    api = "https://gbf.wiki/api.php"
+    request = char
 
-    if message.content.startswith('$gbf'):
-        startTime = time.time()
-        session = requests.Session()
-        api = "https://gbf.wiki/api.php"
-        request = "Medusa"                    # Change this to be arg {whatever} later
+    parameters = {
+        'action': "parse",
+        'page': request,
+        'format': "json"
+    }
 
-        """
-        Have a function here that makes changes to the title to 
-        something readable for the API
-        
-        For now, we'll make it such that it only accepts basic characters
-        that don't require any modifications to the request name 
-        """
+    result = session.get(url=api, params=parameters)
+    soup = BeautifulSoup(result.content, 'lxml')
 
-        parameters = {
-            'action': "parse",
-            'page': request,
-            'format': "json"
-        }
+    image = soup.find_all(attrs={'srcset': True})
+    regex = re.compile(r".png'")
+    linkToImage = ""
+    for i in image:
+        if bool(re.search('01\.png', i['srcset'])):
+            linkToImage = i['srcset']
+            linkToImage = linkToImage[2:]
+            linkToImage = "https://gbf.wiki/" + linkToImage
+            break
 
-        result = session.get(url=api, params=parameters)
-        data = result.json()
+    embed = discord.Embed(title=request,
+                          colour=discord.Colour(0xFFFFFF),
+                          url="https://gbf.wiki/" + request)
+    embed.set_image(url=linkToImage)
+
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def art2(ctx, *, char: str):
+    session = requests.Session()
+    api = "https://gbf.wiki/api.php"
+    request = char
+
+    parameters = {
+        'action': "parse",
+        'page': request,
+        'format': "json"
+    }
+
+    result = session.get(url=api, params=parameters)
+    soup = BeautifulSoup(result.content, 'lxml')
+
+    image = soup.find_all(attrs={'srcset': True})
+    regex = re.compile(r".png'")
+    linkToImage = ""
+    for i in image:
+        if bool(re.search('02\.png', i['srcset'])):
+            linkToImage = i['srcset']
+            linkToImage = linkToImage[2:]
+            linkToImage = "https://gbf.wiki/" + linkToImage
+            break
+
+    embed = discord.Embed(title=request,
+                          colour=discord.Colour(0xFFFFFF),
+                          url="https://gbf.wiki/" + request)
+    embed.set_image(url=linkToImage)
+
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def art3(ctx, *, char: str):
+    session = requests.Session()
+    api = "https://gbf.wiki/api.php"
+    request = char
+
+    parameters = {
+        'action': "parse",
+        'page': request,
+        'format': "json"
+    }
+
+    result = session.get(url=api, params=parameters)
+    soup = BeautifulSoup(result.content, 'lxml')
+
+    image = soup.find_all(attrs={'srcset': True})
+    regex = re.compile(r".png'")
+    linkToImage = ""
+    for i in image:
+        if bool(re.search('03\.png', i['srcset'])):
+            linkToImage = i['srcset']
+            linkToImage = linkToImage[2:]
+            linkToImage = "https://gbf.wiki/" + linkToImage
+            break
+    if linkToImage == "":
+        await ctx.send('Couldn\'t find 5* FLB art for that character.')
+    else:
         embed = discord.Embed(title=request,
                               colour=discord.Colour(0xFFFFFF),
-                              url="https://gbf.wiki/" + "Medusa")
-        await message.channel.send(embed=embed)
-
-        # Calculate the duration of the request
-        currentTime = time.time()
-        print(currentTime - startTime)
-
+                              url="https://gbf.wiki/" + request)
+        embed.set_image(url=linkToImage)
+        await ctx.send(embed=embed)
 
 # Change ...
-client.run('-')
+bot.run('-')
