@@ -15,6 +15,9 @@ parameters = {
 result = session.get(url=api, params=parameters)
 soup = BeautifulSoup(result.content, 'lxml')
 
+"""
+For image/art scraping 
+
 image = soup.find_all(attrs={'srcset':True})
 regex = re.compile(r".png'")
 linkToImage = ""
@@ -25,3 +28,4 @@ for i in image:
 		linkToImage = "gbf.wiki" + linkToImage
 		print(linkToImage)
 		break
+"""
