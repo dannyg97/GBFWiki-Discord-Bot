@@ -8,4 +8,4 @@ Djeeta bot is still a work in progress! These are the tasks I'd like to implemen
 - [ ] List all subsets of race, including an optional rarity filter
 - [ ] View weapon details
 
-Details on how to run this bot locally  will come soon after I implement more features.
+Details on how to run this bot locally will come soon after I implement more features.
